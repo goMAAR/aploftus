@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/goMAAR/aploftus#readme",
   "dependencies": {
-    "eslint": "^4.13.1"
+    "eslint": "^4.13.1",
+    "express": "^4.16.2"
   }
 }
