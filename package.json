@@ -1,0 +1,22 @@
+{
+  "name": "client-app-service",
+  "version": "1.0.0",
+  "description": "Client facing miniservice in Twitter clone to handle routing of client behaviors",
+  "main": "server/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/goMAAR/aploftus.git"
+  },
+  "author": "aploftus",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/goMAAR/aploftus/issues"
+  },
+  "homepage": "https://github.com/goMAAR/aploftus#readme",
+  "dependencies": {
+    "eslint": "^4.13.1"
+  }
+}
