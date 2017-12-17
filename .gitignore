@@ -38,5 +38,6 @@ bower_components/
 
 # test data
 data-generation/tweetSeedFinal.txt
+data-generation/tweetSeedFinal2.txt
 data-generation/userSeedFinal.txt
 data-generation/feedSeedFinal.txt
