@@ -1,45 +1,30 @@
-const jsonfile = require('jsonfile');
 const fs = require('fs');
 
 const fakeUser = require('./userGeneratorHelper.js').fakeUser;
 
-const file = __dirname + '/userSeedFinal.txt';
+const file = __dirname + './seed/userSeed.csv';
 
 let user, prop, command;
 
-// this runs a loop to generate 2000000 users
-for (let x = 0; x < 2000000; x++) {
-  user = fakeUser();
-  user.id = x;
+// var stream = fs.createWriteStream(file, {'flags': 'a', 'encoding': null, 'mode': 0666});
+console.log('\x1b[0m' + 'start');
+stream.once('open', (fd) => {
 
-  command = `HMSET users:${x} `;
-  for (prop in user) {
-    command += `${prop} \"${user[prop]}\" `;
-  }
-  command += '\n';
-  fs.appendFileSync(file, command, (err) => {
-    err && console.error(err);
-  });
-  if (x % 10000 === 0) {
-    console.log(x);
-  }
-}
+  // this runs a loop to generate 500000 users
+  for (let x = 0; x < 500000; x++) {
+    user = fakeUser();
+    user.id = x;
 
-// this creates a set to inventory all users
-command = 'SADD users ';
-for (x = 0; x < 2000000; x++) {
-  command += `${x} `;
-  if (x % 10000 === 0) {
-    console.log(x);
-  }
-}
-command += '\n';
+    command = [];
+    for (prop in user) {
+      command.push(user[prop].toString());
+    }
+    stream.write(command.join(', ') + '\n');
 
-fs.appendFileSync(file, command, (err) => {
-  err && console.error(err);
+    if (x % 100000 === 0) {
+      console.log(x);
+    }
+  }
+  stream.end();
+  console.log('Done!');
 });
-
-console.log('Done!');
-
-
-

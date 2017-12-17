@@ -2,40 +2,29 @@ const fs = require('fs');
 
 const fakeTweet = require('./tweetGeneratorHelper.js').fakeTweet;
 
-const file = __dirname + '/tweetSeedFinal2.txt';
+const file = __dirname + '/tweetSeedTest.csv';
 
 let tweet, prop, command;
 
-// this runs a loop to generate 8000000 tweets
-for (let x = 5000000; x < 8000000; x++) {
-  tweet = fakeTweet();
-  tweet.id = x;
+// var stream = fs.createWriteStream(file, {'flags': 'a', 'encoding': null, 'mode': 0666});
+console.log('\x1b[0m' + 'start');
+stream.once('open', (fd) => {
 
-  command = `HMSET tweets:${x} `;
-  for (prop in tweet) {
-    command += `${prop} \"${tweet[prop]}\" `;
-  }
-  command += '\n';
-  fs.appendFileSync(file, command, (err) => {
-    err && console.error(err);
-  });
-  if (x % 10000 === 0) {
-    console.log(x);
-  }
-}
+  // this runs a loop to generate 2000000 tweets
+  for (let x = 0; x < 2; x++) {
+    tweet = fakeTweet();
+    tweet.id = x;
 
-// this creates a set to inventory all tweets
-command = 'SADD tweets ';
-for (x = 0; x < 8000000; x++) {
-  command += `${x} `;
-  if (x % 10000 === 0) {
-    console.log(x);
-  }
-}
-command += '\n';
+    command = [];
+    for (prop in tweet) {
+      command.push(tweet[prop].toString());
+    }
+    stream.write(command.join(', ') + '\n');
 
-fs.appendFileSync(file, command, (err) => {
-  err && console.error(err);
+    if (x % 100000 === 0) {
+      console.log(x);
+    }
+  }
+  stream.end();
+  console.log('Done!');
 });
-
-console.log('Done!');

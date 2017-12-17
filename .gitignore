@@ -36,8 +36,6 @@ dist/
 node_modules/
 bower_components/
 
-# test data
-data-generation/tweetSeedFinal.txt
-data-generation/tweetSeedFinal2.txt
-data-generation/userSeedFinal.txt
-data-generation/feedSeedFinal.txt
+# historical data
+data-generation/seed
+data-generation/dump.rdb
