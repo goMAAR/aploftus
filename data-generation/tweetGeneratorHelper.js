@@ -1,18 +1,17 @@
 const faker = require('faker');
 const moment = require('moment');
+const { randomInt } = require('./helpers');
 
 const sources = ['Safari for iOS', 'Twitter for Mac', 'Twitter for Android', 'Twitter for iOS'];
-const timezones = ['Pacific Time', 'Mountain Time', 'Central Time', 'Eastern Time'];
-const hex = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'];
 const prefaces = [
   'Ask me why I think',
-  'After much consideration, I have finally decided that',
+  'After much consideration I have finally decided that',
   'Today made me realize',
   'Have you ever thought about how',
 ];
 const nouns = [
   'pumpkin spice lattes',
-  'dogs that skateboard', 
+  'dogs that skateboard',
   'critically acclaimed foreign films',
   'all of my ideas',
   'old timey hats',
@@ -31,41 +30,32 @@ const adjs = [
   'meh'
 ];
 
-const fakeHex = () => {
-  let result = '';
-  for (let x = 0; x < 6; x++) {
-    let randIndex = Math.floor(Math.random() * 16);
-    result += hex[randIndex];
-  }
-  return result;
-};
-
 const fakeTweetText = () => {
-  let preface = prefaces[Math.floor(Math.random() * 4)];
-  let noun = nouns[Math.floor(Math.random() * 8)];
-  let adj = adjs[Math.floor(Math.random() * 8)];
+  let preface = prefaces[randomInt(4)];
+  let noun = nouns[randomInt(8)];
+  let adj = adjs[randomInt(8)];
 
   return `${preface} ${noun} are ${adj}`;
 };
 
 const fakeTweet = () => {
-  let rand = Math.random();
   let tweet = {
     // id: assigned by generator function, a num from 0 to numUsers
     text: fakeTweetText(),
     truncated: false,
-    created_at: moment(faker.date.past()).format('ddd MMM D hh:mm:ss ZZ YYYY'),
-    reply_count: Math.floor(rand * 500),
-    favorite_count: Math.floor(rand * 700),
-    favorited: faker.random.boolean(),
-    retweet_count: Math.floor(rand * 800),
-    retweeted: true,
-    in_reply_to_user_id: 'null',
-    in_reply_to_screen_name: 'null',
-    in_reply_to_status_id: 'null',
+    // created_at: moment(faker.date.recent()).format('ddd MMM D hh:mm:ss ZZ YYYY'),
+    created_at: moment(faker.date.recent()).format('YYYY-MM-DD hh:mm:ss.SSS'),
+    reply_count: randomInt(500),
+    favorite_count: randomInt(700),
+    // favorited: false,
+    retweet_count: randomInt(800),
+    // retweeted: true,
+    in_reply_to_user_id: -1,
+    in_reply_to_screen_name: -1,
+    in_reply_to_status_id: -1,
     possibly_sensitive: false,
-    source: `${sources[Math.floor(rand * 4)]}`,
-    'user:id': Math.floor(rand * 2000000),
+    source: `${sources[randomInt(4)]}`,
+    user_id: randomInt(2000000),
     // 'user:following': false
   };
   return tweet;
