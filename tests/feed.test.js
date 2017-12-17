@@ -8,7 +8,7 @@ describe('Client Service Feed Handler', () => {
   describe('serveFeed', () => {
     it('should serve tweets from the cache', (done) => {
       let tweetIds = ['test1', 'test2', 'test3', 'test4', 'test5'];
-      let result = helpers.serveFeed('testfeed', tweetIds);
+      let result = helpers.serveFeed('testFeed', tweetIds);
 
       expect(result).to.be.an('array');
       expect(result[0]).to.be.an('object');
@@ -20,7 +20,7 @@ describe('Client Service Feed Handler', () => {
       sinon.spy(helpers, 'fetchTweet');
 
       let tweetIds = [1, 'test2', 3, 4, 5];
-      let result = helpers.serveFeed('testfeed', tweetIds);
+      let result = helpers.serveFeed('testFeed', tweetIds);
 
       expect(helpers.fetchTweet).to.have.been.called;
       done();
@@ -46,7 +46,7 @@ describe('Client Service Feed Handler', () => {
             in_reply_to_status_id: 'null',
             possibly_sensitive: false,
             source: 'Safari for iOS',
-            'user:id': 'test',
+            'user:id': 'testUser',
             id: 0
           }
         ]
@@ -61,7 +61,7 @@ describe('Client Service Feed Handler', () => {
   describe('GET requests to /feed', () => {
     it('should respond with a user feed', (done) => {
       const body = {
-        user_id: test,
+        user_id: 'testUser',
         count: 5
       };
 
