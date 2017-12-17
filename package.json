@@ -24,5 +24,8 @@
     "jsonfile": "^4.0.0",
     "moment": "^2.19.4",
     "redis": "^2.8.0"
+  },
+  "devDependencies": {
+    "redis-stream": "^0.1.0"
   }
 }

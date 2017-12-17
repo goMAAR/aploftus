@@ -2,12 +2,12 @@ const fs = require('fs');
 
 const fakeTweet = require('./tweetGeneratorHelper.js').fakeTweet;
 
-const file = __dirname + '/tweetSeedFinal.txt';
+const file = __dirname + '/tweetSeedFinal2.txt';
 
 let tweet, prop, command;
 
 // this runs a loop to generate 8000000 tweets
-for (let x = 0; x < 8000000; x++) {
+for (let x = 5000000; x < 8000000; x++) {
   tweet = fakeTweet();
   tweet.id = x;
 
