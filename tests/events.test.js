@@ -1,6 +1,8 @@
 const { expect } = require('chai');
-const axios = require('axios');
-const port = require('../server/index.js').port;
+const supertest = require('supertest');
+const server = require('../server/index.js');
+
+const request = supertest.agent(server);
 
 describe('Client Service Events', () => {
   describe('POST requests to /favorite/create', () => {
@@ -10,12 +12,10 @@ describe('Client Service Events', () => {
         favoriter_id: 'testUser', // id of person doing the favoriting
       };
 
-      axios.post(`http://localhost:${port}/favorite/create`, body)
-        .then((response) => {
-          expect(response.statusCode).to.equal(201);
-          done();
-        })
-        .catch(err => console.error('error with request'));
+      request
+        .post('/favorite/create')
+        .send(body)
+        .expect(201, done);
     });
   });
 
@@ -26,12 +26,10 @@ describe('Client Service Events', () => {
         favoriter_id: 'testUser', // id of person doing the favoriting
       };
 
-      axios.post(`http://localhost:${port}/favorite/destroy`, body)
-        .then((response) => {
-          expect(response.statusCode).to.equal(201);
-          done();
-        })
-        .catch(err => console.error('error with request'));
+      request
+        .post('/favorite/destroy')
+        .send(body)
+        .expect(201, done);
     });
   });
 
@@ -42,12 +40,10 @@ describe('Client Service Events', () => {
         followed_id: 'testUser2' // id of the person to be followed
       };
 
-      axios.post(`http://localhost:${port}/follow/create`, body)
-        .then((response) => {
-          expect(response.statusCode).to.equal(201);
-          done();
-        })
-        .catch(err => console.error('error with request'));
+      request
+        .post('/follow/create')
+        .send(body)
+        .expect(201, done);
     });
   });
 
@@ -58,12 +54,10 @@ describe('Client Service Events', () => {
         followed_id: 'testUser2' // id of the person to be followed
       };
 
-      axios.post(`http://localhost:${port}/follow/destroy`, body)
-        .then((response) => {
-          expect(response.statusCode).to.equal(201);
-          done();
-        })
-        .catch(err => console.error('error with request'));
+      request
+        .post('/follow/destroy')
+        .send(body)
+        .expect(201, done);
     });
   });
 
@@ -74,12 +68,12 @@ describe('Client Service Events', () => {
         status: 'Maybe he\'ll finally find his keys. #peterfalk'
       };
 
-      axios.post(`http://localhost:${port}/tweets`, body)
-        .then((response) => {
-          expect(response.statusCode).to.equal(201);
-          done();
-        })
-        .catch(err => console.error('error with request'));
+      request
+        .post('/tweets')
+        .send(body)
+        .expect(201, done);
     });
   });
 });
+
+server.close();

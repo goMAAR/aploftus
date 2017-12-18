@@ -1,7 +1,7 @@
-const axios = require('axios');
 const { expect } = require('chai');
 const sinon = require('sinon');
-const port = require('../server/index.js').port;
+const supertest = require('supertest');
+const server = require('../server/index.js');
 const helpers = require('../server/helpers.js');
 
 describe('Client Service Feed Handler', () => {
@@ -65,14 +65,15 @@ describe('Client Service Feed Handler', () => {
         count: 5
       };
 
-      axios.post(`http://localhost:${port}/tweets`, body)
-        .then((response) => {
-          expect(response.data).to.be.an('array');
-          expect(response.data[0]).to.be.an('object');
-          expect(response.data.length).to.equal(5);
+      request
+        .post('/feed')
+        .query(body)
+        .then(res => {
+          expect(res.data).to.be.an('array');
+          expect(res.data[0]).to.be.an('object');
+          expect(res.data.length).to.equal(5);
           done();
-        })
-        .catch(err => console.error('error with request'));
+        });
     });
   });
 });
