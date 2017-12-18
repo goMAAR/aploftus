@@ -75,5 +75,3 @@ describe('Client Service Events', () => {
     });
   });
 });
-
-server.close();
