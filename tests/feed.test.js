@@ -9,8 +9,8 @@ const request = supertest.agent(server);
 describe('Client Service Feed Handler', () => {
   describe('serveFeed', () => {
     it('should serve tweets from the cache', (done) => {
-      const tweetIds = ['test1', 'test2', 'test3', 'test4', 'test5'];
-      const result = helpers.serveFeed('testFeed', tweetIds);
+      const feed = [1, 2, 3, 4, 5];
+      const result = helpers.serveFeed(feed);
 
       expect(result).to.be.an('array');
       expect(result[0]).to.be.an('object');
@@ -21,8 +21,8 @@ describe('Client Service Feed Handler', () => {
     it('should fetch a tweet from Social Network Processing if the tweet is not in the cache', () => {
       sinon.spy(helpers, 'fetchTweet');
 
-      const tweetIds = [1, 'test2', 3, 4, 5];
-      const result = helpers.serveFeed('testFeed', tweetIds);
+      const feed = [1, -1, 3, 4, 5];
+      const result = helpers.serveFeed(feed);
 
       expect(helpers.fetchTweet).to.have.been.called;
       done();
