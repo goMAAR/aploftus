@@ -8,6 +8,12 @@ const dateIsYoungerThan10Min = (date) => {
 };
 
 module.exports = {
+  getFeedList: (userId, cb) => {
+    redis.zrange(`${userId}:feed`, 0, 100, (err, results) => {
+      cb(results);
+    });
+  },
+
   sendEvent: (service, route, body) => {
     if (service === 'engagement') {
       body.created_at = moment().format('ddd MMM D hh:mm:ss ZZ YYYY');
@@ -15,7 +21,7 @@ module.exports = {
     }
   },
 
-  serveLocalFeed: (tweetIds, cb) => {
+  parseFeed: (tweetIds, cb) => {
     const params = '(' + tweetIds.join(', ') + ')';
     const query = `SELECT text FROM tweets WHERE id in ${params}`;
 
