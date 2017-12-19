@@ -2,7 +2,7 @@ const { expect } = require('chai');
 const moment = require('moment');
 const sinon = require('sinon');
 const supertest = require('supertest');
-const helpers = require('../server/helpers.js');
+const utils = require('../server/utils.js');
 const server = require('../server/index.js');
 
 const request = supertest.agent(server);
@@ -22,7 +22,7 @@ describe('Client Service Events', () => {
     });
 
     it('should send favorite event to User Engagement Analysis', () => {
-      sinon.spy(helpers, 'sendEvent');
+      sinon.spy(utils, 'sendEvent');
 
       const body = {
         tweet_id: 'testTweet',
@@ -33,7 +33,7 @@ describe('Client Service Events', () => {
         .post('/favorite/create')
         .send(body)
         .then(res => {
-          expect(helpers.sendEvent.to.have.been.calledWith('engagement', '/favorite/create', body));
+          expect(utils.sendEvent.to.have.been.calledWith('engagement', '/favorite/create', body));
           done();
         });
     });
@@ -62,7 +62,7 @@ describe('Client Service Events', () => {
         .post('/favorite/destroy')
         .send(body)
         .then(res => {
-          expect(helpers.sendEvent.to.have.been.calledWith('engagement', '/favorite/destroy', body));
+          expect(utils.sendEvent.to.have.been.calledWith('engagement', '/favorite/destroy', body));
           done();
         });
     });
@@ -91,7 +91,7 @@ describe('Client Service Events', () => {
         .post('/follow/create')
         .send(body)
         .then(res => {
-          expect(helpers.sendEvent.to.have.been.calledWith('engagement', '/follow/create', body));
+          expect(utils.sendEvent.to.have.been.calledWith('engagement', '/follow/create', body));
           done();
         });
     });
@@ -120,7 +120,7 @@ describe('Client Service Events', () => {
         .post('/follow/destroy')
         .send(body)
         .then(res => {
-          expect(helpers.sendEvent.to.have.been.calledWith('engagement', '/follow/destroy', body));
+          expect(utils.sendEvent.to.have.been.calledWith('engagement', '/follow/destroy', body));
           done();
         });
     });
@@ -151,7 +151,7 @@ describe('Client Service Events', () => {
         .post('/tweets')
         .send(body)
         .then(res => {
-          expect(helpers.sendEvent.to.have.been.calledWith('engagement', '/favorite/create', body));
+          expect(utils.sendEvent.to.have.been.calledWith('engagement', '/favorite/create', body));
           done();
         });
     });
