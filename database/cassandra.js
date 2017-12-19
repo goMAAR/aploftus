@@ -1,5 +1,5 @@
 const cassandra = require('cassandra-driver');
-const client = new cassandra.Client({ contactPoints: ['host1'] });
-client.connect(function (err) {
-  assert.ifError(err);
-});
+
+const client = new cassandra.Client({ contactPoints: ['127.0.0.1'], keyspace: 'tweetly' });
+
+module.exports = client;
