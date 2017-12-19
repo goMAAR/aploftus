@@ -6,8 +6,6 @@ const server = require('../server/index.js');
 
 const request = supertest.agent(server);
 
-const request = supertest.agent(server);
-
 describe('Client Service Feed Handler', () => {
   describe('serveFeed', () => {
     it('should serve tweets from the cache', (done) => {
