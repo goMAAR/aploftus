@@ -7,10 +7,10 @@ const server = require('../server/index.js');
 const request = supertest.agent(server);
 
 describe('Client Service Feed Handler', () => {
-  describe('serveLocalFeed', () => {
+  describe('parseFeed', () => {
     it('should serve tweets from the cache', (done) => {
       const feed = [1, 2, 3, 4, 5];
-      utils.serveLocalFeed(feed, (result) => {
+      utils.parseFeed(feed, (result) => {
         expect(result).to.be.an('array');
         expect(result[0]).to.be.an('object');
         expect(result.length).to.equal(5);
@@ -25,6 +25,19 @@ describe('Client Service Feed Handler', () => {
 
       utils.userAccessedInLast10Min(userId, (boolean) => {
         expect(boolean).to.be.a('boolean');
+        done();
+      });
+    });
+  });
+
+  describe('getFeedList', () => {
+    it('should return a list of tweets', (done) => {
+      const userId = 1;
+
+      utils.getFeedList(userId, (feed) => {
+        expect(feed).to.be.an('array');
+        expect(feed[0]).to.be.a('string');
+        expect(feed.length).to.equal(101);
         done();
       });
     });
