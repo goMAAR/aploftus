@@ -1,16 +1,16 @@
 const { expect } = require('chai');
 const sinon = require('sinon');
 const supertest = require('supertest');
-const server = require('../server/index.js');
 const helpers = require('../server/helpers.js');
+const server = require('../server/index.js');
 
 const request = supertest.agent(server);
 
 describe('Client Service Feed Handler', () => {
   describe('serveFeed', () => {
     it('should serve tweets from the cache', (done) => {
-      let tweetIds = ['test1', 'test2', 'test3', 'test4', 'test5'];
-      let result = helpers.serveFeed('testFeed', tweetIds);
+      const tweetIds = ['test1', 'test2', 'test3', 'test4', 'test5'];
+      const result = helpers.serveFeed('testFeed', tweetIds);
 
       expect(result).to.be.an('array');
       expect(result[0]).to.be.an('object');
@@ -21,8 +21,8 @@ describe('Client Service Feed Handler', () => {
     it('should fetch a tweet from Social Network Processing if the tweet is not in the cache', () => {
       sinon.spy(helpers, 'fetchTweet');
 
-      let tweetIds = [1, 'test2', 3, 4, 5];
-      let result = helpers.serveFeed('testFeed', tweetIds);
+      const tweetIds = [1, 'test2', 3, 4, 5];
+      const result = helpers.serveFeed('testFeed', tweetIds);
 
       expect(helpers.fetchTweet).to.have.been.called;
       done();
@@ -32,7 +32,7 @@ describe('Client Service Feed Handler', () => {
 
   describe('refreshTweets', () => {
     it('should parse tweet objects into cache', (done) => {
-      let result = helpers.refreshTweets(
+      const result = helpers.refreshTweets(
         [
           {
             text: 'Today made me realize footlong sandwiches from Subway are amazing',
