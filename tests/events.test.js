@@ -53,11 +53,9 @@ describe('Client Service Events', () => {
     });
 
     it('should send favorite event to User Engagement Analysis', () => {
-      sinon.spy(helpers, 'sendEvent');
-
       const body = {
         tweet_id: 'testTweet',
-        favoriter_id: 'testUser',
+        favoriter_id: 'testUser', // id of person doing the favoriting
       };
 
       request
@@ -84,8 +82,6 @@ describe('Client Service Events', () => {
     });
 
     it('should send follow event to User Engagement Analysis', () => {
-      sinon.spy(helpers, 'sendEvent');
-
       const body = {
         follower_id: 'testUser1', // authenticated user doing the following
         followed_id: 'testUser2' // id of the person to be followed
@@ -115,8 +111,6 @@ describe('Client Service Events', () => {
     });
 
     it('should send follow event to User Engagement Analysis', () => {
-      sinon.spy(helpers, 'sendEvent');
-
       const body = {
         follower_id: 'testUser1', // authenticated user doing the following
         followed_id: 'testUser2' // id of the person to be followed
@@ -146,9 +140,7 @@ describe('Client Service Events', () => {
         .expect(201, done);
     });
 
-    it('should send tweet event to User Engagement Analysis', () => {
-      sinon.spy(helpers, 'sendEvent');
-
+    it('should send tweet event to Tweet Inventory', () => {
       const body = {
         user_id: 'testUser1',
         status: 'Maybe he\'ll finally find his keys. #peterfalk',

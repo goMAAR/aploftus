@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/goMAAR/aploftus#readme",
   "dependencies": {
+    "body-parser": "^1.18.2",
     "cassandra-driver": "^3.3.0",
     "express": "^4.16.2",
     "moment": "^2.19.4",
