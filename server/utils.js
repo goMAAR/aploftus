@@ -7,17 +7,39 @@ const dateIsYoungerThan10Min = (date) => {
 };
 
 module.exports = {
+  insertTweet: (tweet, cb) => {
+    let columns = [];
+    let values = [];
+    for (let prop in tweet) {
+      columns.push(prop);
+      if (prop === 'text' || prop === 'created_at' || prop === 'source') {
+        values.push(`'${tweet[prop]}'`);
+      } else {
+        values.push(tweet[prop]);
+      }
+    }
+
+    const query = `INSERT INTO tweetly.tweets (${columns.join(', ')}) VALUES (${values.join(', ')})`;
+    cassandra.execute(query, (err, result) => {
+      err && console.log(err);
+      cb(result);
+    });
+  },
+
   getFeedList: (userId, count = 100, cb) => {
     redis.zrange(`${userId}:feed`, 0, count - 1, (err, results) => {
+      err && console.log(err);
       cb(results);
     });
   },
 
   parseFeed: (tweetIds, cb) => {
+    console.log('inside parseFeed');
     const params = '(' + tweetIds.join(', ') + ')';
-    const query = `SELECT text FROM tweets WHERE id in ${params}`;
+    const query = `SELECT * FROM tweets WHERE id in ${params}`;
 
     cassandra.execute(query, (err, result) => {
+      err && console.log(err);
       cb(result.rows);
     });
   },
@@ -44,15 +66,13 @@ module.exports = {
   },
 
   userAccessedInLast10Min: (userId, cb) => {
-    // redis.get(`${userId}:accessed`, (err, datetime) => {
-    //   if (!datetime || !dateIsYoungerThan10Min(datetime)) {
-    //     cb(false);
-    //   } else {
-    //     cb(true);
-    //   }
-    //   redis.set(`${userId}:accessed`, moment().format('YYYY-MM-DD hh:mm:ss'));
-    // });
-    /* uncomment the above and comment out the below for production */
-    cb(true);
+    redis.get(`${userId}:accessed`, (err, datetime) => {
+      if (!datetime || !dateIsYoungerThan10Min(datetime)) {
+        cb(false);
+      } else {
+        cb(true);
+      }
+      redis.set(`${userId}:accessed`, moment().format('YYYY-MM-DD hh:mm:ss'));
+    });
   }
 };

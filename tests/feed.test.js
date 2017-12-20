@@ -21,7 +21,7 @@ describe('Client Service Feed Handler', () => {
 
   describe('userAccessedInLast10Min', () => {
     it('should return a boolean', (done) => {
-      const userId = 1;
+      const userId = -1;
 
       utils.userAccessedInLast10Min(userId, (boolean) => {
         expect(boolean).to.be.a('boolean');
@@ -32,7 +32,7 @@ describe('Client Service Feed Handler', () => {
 
   describe('getFeedList', () => {
     it('should return a list of tweets', (done) => {
-      const userId = 1;
+      const userId = -1;
 
       utils.getFeedList(userId, 5, (feed) => {
         expect(feed).to.be.an('array');
@@ -45,7 +45,7 @@ describe('Client Service Feed Handler', () => {
 
   describe('requestRecentFeed', () => {
     it('should send a request to Social Network Processing', (done) => {
-      const userId = 'testUser';
+      const userId = -1;
 
       utils.requestRecentFeed(userId, 5, (feed) => {
         expect(feed).to.be.an('array');
@@ -55,7 +55,7 @@ describe('Client Service Feed Handler', () => {
     });
 
     it('should insert recent feed into cache', (done) => {
-      const userId = 'testUser';
+      const userId = -1;
 
       utils.requestRecentFeed(userId, 5, (recentFeed) => {
         utils.getFeedList(userId, 5, (feedFromCache) => {
@@ -66,29 +66,26 @@ describe('Client Service Feed Handler', () => {
     });
   });
 
-  describe('refreshTweets', () => {
+  describe('insertTweet', () => {
     it('should parse tweet objects into cache', (done) => {
-      const newTweets = [
+      const newTweet =
         {
           text: 'Today made me realize footlong sandwiches from Subway are amazing',
           truncated: false,
           created_at: 'Wed Apr 26 12:52:17 -0700 2017',
           reply_count: 67,
           favorite_count: 93,
-          favorited: false,
           retweet_count: 107,
-          retweeted: true,
           in_reply_to_user_id: 'null',
           in_reply_to_screen_name: 'null',
           in_reply_to_status_id: 'null',
           possibly_sensitive: false,
           source: 'Safari for iOS',
-          'user:id': -1,
+          user_id: -1,
           id: -1
-        }
-      ];
-      utils.refreshTweets(newTweets, (result) => {
-        expect(result).to.equal(1);
+        };
+      utils.insertTweet(newTweet, (result) => {
+        expect(result).to.exist;
         done();
       });
     });
@@ -97,17 +94,17 @@ describe('Client Service Feed Handler', () => {
   describe('GET requests to /feed', () => {
     it('should respond with a user feed', (done) => {
       const body = {
-        user_id: 1,
+        user_id: -1,
         count: 5
       };
 
       request
-        .post('/feed')
+        .get('/feed')
         .query(body)
         .then(res => {
-          expect(res.data).to.be.an('array');
-          expect(res.data[0]).to.be.an('object');
-          expect(res.data.length).to.equal(5);
+          expect(res.body).to.be.an('array');
+          expect(res.body[0]).to.be.an('object');
+          expect(res.body.length).to.equal(5);
           done();
         });
     });
