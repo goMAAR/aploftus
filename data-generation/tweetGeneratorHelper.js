@@ -7,7 +7,6 @@ const fakeTweet = () => {
     // id: assigned by generator function, a num from 0 to numUsers
     text: helpers.fakeTweetText(),
     truncated: false,
-    // created_at: moment(faker.date.recent()).format('ddd MMM D hh:mm:ss ZZ YYYY'),
     created_at: moment(faker.date.recent()).format('YYYY-MM-DD hh:mm:ss.SSS'),
     reply_count: helpers.randomInt(500),
     favorite_count: helpers.randomInt(700),

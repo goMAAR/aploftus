@@ -22,7 +22,6 @@ const fakeUser = () => {
     default_profile_image: false,
     profile_link_color: fakeHex(),
     profile_text_color: fakeHex(),
-    // created_at: moment(faker.date.recent()).format('ddd MMM D hh:mm:ss ZZ YYYY'),
     created_at: moment(faker.date.recent()).format('YYYY-MM-DD hh:mm:ss.SSS'),
     default_profile: true,
     url: faker.internet.url(),
