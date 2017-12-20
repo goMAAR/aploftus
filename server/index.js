@@ -28,13 +28,15 @@ app.post('/tweets', (req, res) => {
 });
 
 app.get('/feed', (req, res) => {
-  let userId = req.body.user_id;
-  let count = req.body.count;
+  let userId = req.query.user_id;
+  let count = req.query.count;
 
   utils.userAccessedInLast10Min(userId, (bool) => {
     if (bool === true) {
       utils.getFeedList(userId, count, (feed) => {
+        console.log('inside get feed callback');
         utils.parseFeed(feed, (tweets) => {
+          console.log('ready to send tweets ', tweets);
           res.send(tweets);
         });
       });
