@@ -138,6 +138,34 @@ module.exports = {
     }
   },
 
+  updateFavorite: (favoriteObj) => {
+    let tweet_id = favoriteObj.tweet_id;
+    let user_id = favoriteObj.favoriter_id;
+    let decrement = favoriteObj.destroy;
+
+    return new Promise((resolve, reject) => {
+      let query = `SELECT favorite_count from tweetly.tweets WHERE id = ${tweet_id}`;
+      cassandra.execute(query, (err, result1) => {
+        let tweetFaveCount = result1.rows[0].favorite_count;
+        tweetFaveCount = decrement ? tweetFaveCount - 1 : tweetFaveCount + 1;
+        query = `UPDATE tweetly.tweets SET favorite_count = ${tweetFaveCount} WHERE id = ${tweet_id}`;
+        cassandra.execute(query, (err, result2) => {
+          query = `SELECT favorites_count from tweetly.users WHERE id = ${user_id}`;
+          cassandra.execute(query, (err, result3) => {
+            let userFaveCount = result3.rows[0].favorites_count;
+            userFaveCount = decrement ? userFaveCount - 1 : userFaveCount + 1;
+            query = `UPDATE tweetly.users SET favorites_count = ${userFaveCount} WHERE id = ${user_id}`;
+            cassandra.execute(query, (err, result4) => {
+              favoriteObj.favorite_count = tweetFaveCount;
+              favoriteObj.user_favorites_count = userFaveCount;
+              resolve(favoriteObj);
+            });
+          });
+        });
+      });
+    });
+  },
+
   userAccessedInLast10Min: (userId, cb) => {
     redis.get(`${userId}:accessed`, (err, datetime) => {
       if (!datetime || !_dateIsYoungerThan10Min(datetime)) {
