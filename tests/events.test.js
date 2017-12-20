@@ -82,25 +82,25 @@ describe('Client Service Events', () => {
     });
   });
 
-  describe('updateFollow', () => {
-    it('should resolve to an updated follow object', (done) => {
-      const body = {
-        follower_id: 1,
-        followed_id: 2,
-        destroy: false
-      };
+  // describe('updateFollow', () => {
+  //   it('should resolve to an updated follow object', (done) => {
+  //     const body = {
+  //       follower_id: 1,
+  //       followed_id: 2,
+  //       destroy: false
+  //     };
 
-      utils.updateFollow(body)
-        .then(followObj => {
-          expect(followObj).to.be.an('object');
-          expect(followObj.follower_id).to.be.a('number');
-          expect(followObj.followers_count).to.be.a('number');
-          expect(followObj.followed_id).to.be.a('number');
-          expect(followObj.friends_count).to.be.a('number');
-          done();
-        });
-    });
-  });
+  //     utils.updateFollow(body)
+  //       .then(followObj => {
+  //         expect(followObj).to.be.an('object');
+  //         expect(followObj.follower_id).to.be.a('number');
+  //         expect(followObj.followers_count).to.be.a('number');
+  //         expect(followObj.followed_id).to.be.a('number');
+  //         expect(followObj.friends_count).to.be.a('number');
+  //         done();
+  //       });
+  //   });
+  // });
 
   describe('POST requests to /follow', () => {
     it('should respond with a 201 status code', (done) => {
@@ -175,6 +175,7 @@ describe('Client Service Events', () => {
         .post('/tweets')
         .send(body)
         .then(res => {
+          console.log('full tweet', res.body);
           expect(res.body.text).to.equal(body.status);
           expect(res.body.user_id).to.be.a('number');
           expect(res.body.user.name).to.be.a('string');

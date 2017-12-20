@@ -28,16 +28,15 @@ app.post('/favorite', (req, res) => {
 
 app.post('/follow', (req, res) => {
   utils.sendEvent('engagement', req.path, req.body);
-  // future feature will update the local cache with favorite counts
-  // future feature will send http to user engagement
+  utils.updateFollow(req.body);
   res.status(201).send();
 });
 
-app.post('/follow', (req, res) => {
-  utils.sendEvent('engagement', req.path, req.body);
-  // future feature will update the local cache with follow counts
-  // future feature will send http to user engagement
-  res.status(201).send();
+app.post('/tweets', (req, res) => {
+  utils.sendEvent('tweets', '/tweets', req.body)
+    .then(tweet => {
+      res.status(201).send(tweet);
+    });
 });
 
 app.post('/tweets', (req, res) => {
@@ -55,9 +54,7 @@ app.get('/feed', (req, res) => {
   utils.userAccessedInLast10Min(userId, (bool) => {
     if (bool === true) {
       utils.getFeedList(userId, count, (feed) => {
-        // console.log('inside get feed callback');
         utils.parseFeed(feed, (tweets) => {
-          // console.log('ready to send tweets ', tweets);
           res.send(tweets);
         });
       });

@@ -1,3 +1,4 @@
+const axios = require('axios');
 const moment = require('moment');
 const Promise = require('bluebird');
 /* cassandra stores the tweet cache and user cache */
@@ -139,26 +140,58 @@ module.exports = {
   },
 
   updateFavorite: (favoriteObj) => {
-    let tweet_id = favoriteObj.tweet_id;
-    let user_id = favoriteObj.favoriter_id;
-    let decrement = favoriteObj.destroy;
+    let { tweet_id, favoriter_id, destroy } = favoriteObj;
 
     return new Promise((resolve, reject) => {
       let query = `SELECT favorite_count from tweetly.tweets WHERE id = ${tweet_id}`;
+
       cassandra.execute(query, (err, result1) => {
         let tweetFaveCount = result1.rows[0].favorite_count;
-        tweetFaveCount = decrement ? tweetFaveCount - 1 : tweetFaveCount + 1;
+        tweetFaveCount = destroy ? tweetFaveCount - 1 : tweetFaveCount + 1;
         query = `UPDATE tweetly.tweets SET favorite_count = ${tweetFaveCount} WHERE id = ${tweet_id}`;
+
         cassandra.execute(query, (err, result2) => {
-          query = `SELECT favorites_count from tweetly.users WHERE id = ${user_id}`;
+          query = `SELECT favorites_count from tweetly.users WHERE id = ${favoriter_id}`;
+
           cassandra.execute(query, (err, result3) => {
             let userFaveCount = result3.rows[0].favorites_count;
-            userFaveCount = decrement ? userFaveCount - 1 : userFaveCount + 1;
-            query = `UPDATE tweetly.users SET favorites_count = ${userFaveCount} WHERE id = ${user_id}`;
+            userFaveCount = destroy ? userFaveCount - 1 : userFaveCount + 1;
+            query = `UPDATE tweetly.users SET favorites_count = ${userFaveCount} WHERE id = ${favoriter_id}`;
+
             cassandra.execute(query, (err, result4) => {
               favoriteObj.favorite_count = tweetFaveCount;
               favoriteObj.user_favorites_count = userFaveCount;
               resolve(favoriteObj);
+            });
+          });
+        });
+      });
+    });
+  },
+
+  updateFollow: (followObj) => {
+    let { follower_id, followed_id, destroy } = followObj;
+
+    return new Promise((resolve, reject) => {
+      let query = `SELECT friends_count from tweetly.users WHERE id = ${follower_id}`;
+
+      cassandra.execute(query, (err, result1) => {
+        let { friends_count } = result1.rows[0];
+        friends_count = destroy ? friends_count - 1 : friends_count + 1;
+        query = `UPDATE tweetly.users SET friends_count = ${friends_count} WHERE id = ${follower_id}`;
+
+        cassandra.execute(query, (err, result2) => {
+          query = `SELECT followers_count from tweetly.users WHERE id = ${followed_id}`;
+
+          cassandra.execute(query, (err, result3) => {
+            let { followers_count } = result3.rows[0];
+            followers_count = destroy ? followers_count - 1 : followers_count + 1;
+            query = `UPDATE tweetly.users SET followers_count = ${followers_count} WHERE id = ${followed_id}`;
+
+            cassandra.execute(query, (err, result4) => {
+              followObj.friends_count = friends_count;
+              followObj.followers_count = followers_count;
+              resolve(followObj);
             });
           });
         });
