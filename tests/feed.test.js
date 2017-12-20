@@ -34,11 +34,34 @@ describe('Client Service Feed Handler', () => {
     it('should return a list of tweets', (done) => {
       const userId = 1;
 
-      utils.getFeedList(userId, (feed) => {
+      utils.getFeedList(userId, 5, (feed) => {
         expect(feed).to.be.an('array');
         expect(feed[0]).to.be.a('string');
-        expect(feed.length).to.equal(101);
+        expect(feed.length).to.equal(5);
         done();
+      });
+    });
+  });
+
+  describe('requestRecentFeed', () => {
+    it('should send a request to Social Network Processing', (done) => {
+      const userId = 'testUser';
+
+      utils.requestRecentFeed(userId, 5, (feed) => {
+        expect(feed).to.be.an('array');
+        expect(feed[0]).to.be.a('string');
+        done();
+      });
+    });
+
+    it('should insert recent feed into cache', (done) => {
+      const userId = 'testUser';
+
+      utils.requestRecentFeed(userId, 5, (recentFeed) => {
+        utils.getFeedList(userId, 5, (feedFromCache) => {
+          expect(feedFromCache).to.deep.equal(recentFeed);
+          done();
+        });
       });
     });
   });
@@ -74,7 +97,7 @@ describe('Client Service Feed Handler', () => {
   describe('GET requests to /feed', () => {
     it('should respond with a user feed', (done) => {
       const body = {
-        user_id: -1,
+        user_id: 1,
         count: 5
       };
 
