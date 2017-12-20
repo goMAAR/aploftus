@@ -23,6 +23,27 @@ describe('Client Service Events', () => {
         .expect(201, done);
     });
 
+    it('should respond with favorite count object', (done) => {
+      const body = {
+        tweet_id: 1,
+        favoriter_id: 1,
+        author_id: 2,
+        destroy: true
+      };
+
+      request
+        .post('/favorite')
+        .send(body)
+        .then(res => {
+          expect(res.body).to.be.an('object');
+          expect(res.body.user_id).to.be.a('number');
+          expect(res.body.user_favorites_count).to.be.a('number');
+          expect(res.body.tweet_id).to.be.a('number');
+          expect(res.body.favorite_count).to.be.a('number');
+          done();
+        });
+    });
+
     it('should send favorite event to User Engagement Analysis', () => {
       sinon.spy(utils, 'sendEvent');
 
@@ -57,7 +78,25 @@ describe('Client Service Events', () => {
         .expect(201, done);
     });
 
-    it('should send follow event to User Engagement Analysis', () => {
+    it('should respond with follow count object', (done) => {
+      const body = {
+        follower_id: 1,
+        followed_id: 2,
+        destroy: true
+      };
+
+      request
+        .post('/follow')
+        .send(body)
+        .then(res => {
+          expect(res.body).to.be.an('object');
+          expect(res.body.user_id).to.be.a('number');
+          expect(res.body.followers_count).to.be.a('number');
+          done();
+        });
+    });
+
+    it('should send favorite event to User Engagement Analysis', () => {
       const body = {
         follower_id: 1,
         followed_id: 2,
@@ -77,7 +116,7 @@ describe('Client Service Events', () => {
   describe('POST requests to /tweets', () => {
     it('should respond with a 201 status code', (done) => {
       const body = {
-        user_id: 1,
+        user_id: -1,
         status: 'Maybe he\'ll finally find his keys. #peterfalk',
         source: 'Safari for iOS'
       };
@@ -90,7 +129,7 @@ describe('Client Service Events', () => {
 
     it('should respond with a full tweet object', (done) => {
       const body = {
-        user_id: 1,
+        user_id: -1,
         status: 'Maybe he\'ll finally find his keys. #peterfalk',
         source: 'Safari for iOS'
       };
@@ -99,8 +138,9 @@ describe('Client Service Events', () => {
         .post('/tweets')
         .send(body)
         .then(res => {
-          expect(res.body).to.be.an('object');
-          expect(res.body.user).to.be.an('object');
+          expect(res.body.text).to.equal(body.status);
+          expect(res.body.user_id).to.be.a('number');
+          expect(res.body.user.name).to.be.a('string');
           done();
         });
     });
