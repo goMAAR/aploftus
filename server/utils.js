@@ -54,6 +54,7 @@ module.exports = {
   },
 
   getFeedList: (userId, count = 100, cb) => {
+    console.log('inside getFeedList');
     redis.zrange(`${userId}:feed`, 0, count - 1, (err, results) => {
       err && console.log(err);
       // this conversion to number types satisfies the tests, but isn't
@@ -66,6 +67,7 @@ module.exports = {
   },
 
   parseFeed: (tweetIds, cb) => {
+    console.log('inside parseFeed');
     const params = '(' + tweetIds.join(', ') + ')';
     const query = `SELECT * FROM tweets WHERE id in ${params}`;
 

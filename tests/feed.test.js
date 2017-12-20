@@ -57,7 +57,7 @@ describe('Client Service Feed Handler', () => {
 
   describe('getFeedList', () => {
     it('should return a list of tweets', (done) => {
-      const userId = 1;
+      const userId = -1;
 
       utils.getFeedList(userId, 5, (feed) => {
         expect(feed).to.be.an('array');
@@ -119,7 +119,7 @@ describe('Client Service Feed Handler', () => {
   describe('GET requests to /feed', () => {
     it('should respond with a user feed', (done) => {
       const body = {
-        user_id: 1,
+        user_id: -1,
         count: 5
       };
 
