@@ -20,6 +20,14 @@ app.get('/', (req, res) => res.send('Hello World!'));
 
 app.post('/favorite', (req, res) => {
   utils.sendEvent('engagement', req.path, req.body);
+  utils.updateFavorite(req.body)
+    .then((favoriteObj) => {
+      res.status(201).send(favoriteObj);
+    });
+});
+
+app.post('/follow', (req, res) => {
+  utils.sendEvent('engagement', req.path, req.body);
   // future feature will update the local cache with favorite counts
   // future feature will send http to user engagement
   res.status(201).send();
@@ -56,7 +64,7 @@ app.get('/feed', (req, res) => {
     } else {
       utils.requestRecentFeed(userId, count, (feed) => {
         utils.parseFeed(feed, (tweets) => {
-          res.send({ data: tweets });
+          res.send(tweets);
         });
       });
     }
