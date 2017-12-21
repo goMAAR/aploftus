@@ -34,9 +34,7 @@ app.get('/feed', (req, res) => {
   utils.userAccessedInLast10Min(userId, (bool) => {
     if (bool === true) {
       utils.getFeedList(userId, count, (feed) => {
-        console.log('inside get feed callback');
         utils.parseFeed(feed, (tweets) => {
-          console.log('ready to send tweets ', tweets);
           res.send(tweets);
         });
       });
