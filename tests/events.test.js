@@ -77,9 +77,9 @@ describe('Client Service Events', () => {
   describe('POST requests to /tweets', () => {
     it('should respond with a 201 status code', (done) => {
       const body = {
-        user_id: 'testUser1',
+        user_id: 1,
         status: 'Maybe he\'ll finally find his keys. #peterfalk',
-        source: 'Safar for iOS'
+        source: 'Safari for iOS'
       };
 
       request
@@ -107,7 +107,7 @@ describe('Client Service Events', () => {
 
     it('should send tweet event to Tweet Inventory', () => {
       const body = {
-        user_id: 'testUser1',
+        user_id: 1,
         status: 'Maybe he\'ll finally find his keys. #peterfalk',
         source: 'Safari for iOS'
       };
