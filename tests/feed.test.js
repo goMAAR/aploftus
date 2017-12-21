@@ -59,6 +59,29 @@ describe('Client Service Feed Handler', () => {
     });
   });
 
+  describe('requestRecentFeed', () => {
+    it('should send a request to Social Network Processing', (done) => {
+      const userId = -1;
+
+      utils.requestRecentFeed(userId, 5, (feed) => {
+        expect(feed).to.be.an('array');
+        expect(feed[0]).to.be.a('string');
+        done();
+      });
+    });
+
+    it('should insert recent feed into cache', (done) => {
+      const userId = -1;
+
+      utils.requestRecentFeed(userId, 5, (recentFeed) => {
+        utils.getFeedList(userId, 5, (feedFromCache) => {
+          expect(feedFromCache).to.deep.equal(recentFeed);
+          done();
+        });
+      });
+    });
+  });
+
   describe('insertTweet', () => {
     it('should parse tweet objects into cache', (done) => {
       const newTweet =
