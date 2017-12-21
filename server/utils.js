@@ -1,9 +1,11 @@
 const moment = require('moment');
 const Promise = require('bluebird');
+/* cassandra stores the tweet cache and user cache */
 const cassandra = require('../database/cassandra.js');
+/* redis stores the "feed list", in a sorted set data structure */
 const redis = require('../database/redis.js');
 
-const attachUsers = (tweets, cb) => {
+const _attachUsers = (tweets, cb) => {
   let userIds = [];
   for (let i = 0; i < tweets.length; i++) {
     userIds.push(tweets[i].user_id);
@@ -24,12 +26,13 @@ const attachUsers = (tweets, cb) => {
   });
 };
 
-const dateIsYoungerThan10Min = (date) => {
+const _dateIsYoungerThan10Min = (date) => {
   return moment(date).add(10, 'minutes').isSameOrAfter(new Date());
 };
 
 module.exports = {
-  attachUsers: attachUsers,
+  // exported for the sake of testing, but used only internally
+  _attachUsers: _attachUsers,
 
   insertTweet: (tweet, cb) => {
     let columns = [];
@@ -53,6 +56,11 @@ module.exports = {
   getFeedList: (userId, count = 100, cb) => {
     redis.zrange(`${userId}:feed`, 0, count - 1, (err, results) => {
       err && console.log(err);
+      // this conversion to number types satisfies the tests, but isn't
+      // necessary to query cassandra later.
+      for (let i = 0; i < results.length; i++) {
+        results[i] = parseInt(results[i], 10);
+      }
       cb(results);
     });
   },
@@ -63,6 +71,8 @@ module.exports = {
 
     cassandra.execute(query, (err, result) => {
       err && console.log(err);
+      // tweets are retrieved in ID order, not in order listed in the feed
+      // therefore, create a new, feed-ordered list of tweets to return to client
       let tweetHash = {};
       let tweets = [];
       for (let i = 0; i < result.rows.length; i++) {
@@ -79,13 +89,14 @@ module.exports = {
   },
 
   requestRecentFeed: (userId, count = 100, cb) => {
-    // console.log('inside requestRecentFeed');
-    // console.log('requesting feed from social network processing');
-    // send http request to social network processing, await response
-    let response = ['1', '2', '3', '4', '5'];
+    // send http request to social network processing
+    // response from SNP is a list of tweetIds
+    let response = [1, 2, 3, 4, 5];
     let params = [];
+    // deletes old version of the feed, inserts updated version
     redis.del(`${userId}:feed`, (err, result) => {
       for (let i = 0; i < response.length; i++) {
+        // sets "score" of each item in the sorted set to item's index
         params.push(i, response[i]);
       }
       redis.zadd(`${userId}:feed`, ...params);
@@ -118,7 +129,7 @@ module.exports = {
           truncated: false
         };
 
-        attachUsers([tweet], (tweets) => {
+        _attachUsers([tweet], (tweets) => {
           resolve(tweets[0]);
         });
       });
@@ -127,7 +138,7 @@ module.exports = {
 
   userAccessedInLast10Min: (userId, cb) => {
     redis.get(`${userId}:accessed`, (err, datetime) => {
-      if (!datetime || !dateIsYoungerThan10Min(datetime)) {
+      if (!datetime || !_dateIsYoungerThan10Min(datetime)) {
         cb(false);
       } else {
         cb(true);

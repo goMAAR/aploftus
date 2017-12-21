@@ -7,7 +7,7 @@ const server = require('../server/index.js');
 const request = supertest.agent(server);
 
 describe('Client Service Feed Handler', () => {
-  describe('attachUsers', () => {
+  describe('_attachUsers', () => {
     it('should extend tweet object with user object', (done) => {
       const tweets = [
         { id: -1, user_id: 1 },
@@ -15,7 +15,7 @@ describe('Client Service Feed Handler', () => {
         { id: -3, user_id: 2 },
       ];
 
-      utils.attachUsers(tweets, (extendedTweets) => {
+      utils._attachUsers(tweets, (extendedTweets) => {
         expect(extendedTweets[0].user).to.be.an('object');
         done();
       });
@@ -61,7 +61,7 @@ describe('Client Service Feed Handler', () => {
 
       utils.getFeedList(userId, 5, (feed) => {
         expect(feed).to.be.an('array');
-        expect(feed[0]).to.be.a('string');
+        expect(feed[0]).to.be.a('number');
         expect(feed.length).to.equal(5);
         done();
       });
@@ -74,7 +74,7 @@ describe('Client Service Feed Handler', () => {
 
       utils.requestRecentFeed(userId, 5, (feed) => {
         expect(feed).to.be.an('array');
-        expect(feed[0]).to.be.a('string');
+        expect(feed[0]).to.be.a('number');
         done();
       });
     });

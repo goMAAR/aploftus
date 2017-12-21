@@ -72,8 +72,6 @@ describe('Client Service Events', () => {
           done();
         });
     });
-
-
   });
 
   describe('POST requests to /tweets', () => {
