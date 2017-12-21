@@ -1,17 +1,4 @@
-// a set called users includes all user ids as members
-// a set called tweets includes all tweet ids
-
-// each tweet is a hash as follows:
-// key = tweets:[tweetId]
-// field = a tweet property, such as "text"
-// value = the value for that property, such as "Hello, world"
-
-// each user is a hash as follows:
-// key = users:[userId]
-// field = a user property, such as "name"
-// value = the value for that property, such as "Carl Sagan"
-
 // each feed is a sorted set as follows:
 // key = [userId]:feed
-// score = an index ranging from 0 to 200
+// score = an index ranging from 0 to 100
 // member = [tweetId]
