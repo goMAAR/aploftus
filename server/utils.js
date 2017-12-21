@@ -63,7 +63,18 @@ module.exports = {
 
     cassandra.execute(query, (err, result) => {
       err && console.log(err);
-      cb(result.rows);
+      let tweetHash = {};
+      let tweets = [];
+      for (let i = 0; i < result.rows.length; i++) {
+        let tweet = result.rows[i];
+        tweetHash[tweet.id] = i;
+      }
+      for (i = 0; i < tweetIds.length; i++) {
+        let indexOfTweet = tweetHash[tweetIds[i]];
+        tweets.push(result.rows[indexOfTweet]);
+      }
+
+      cb(tweets);
     });
   },
 
