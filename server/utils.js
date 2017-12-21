@@ -1,12 +1,36 @@
 const moment = require('moment');
+const Promise = require('bluebird');
 const cassandra = require('../database/cassandra.js');
 const redis = require('../database/redis.js');
+
+const attachUsers = (tweets, cb) => {
+  let userIds = [];
+  for (let i = 0; i < tweets.length; i++) {
+    userIds.push(tweets[i].user_id);
+  }
+  const query = `SELECT * from tweetly.users WHERE id in (${userIds.join(', ')})`;
+
+  cassandra.execute(query, (err, result) => {
+    let users = {};
+    for (i = 0; i < result.rows.length; i++) {
+      let user = result.rows[i];
+      users[user.id] = user;
+    }
+    for (i = 0; i < tweets.length; i++) {
+      let tweet = tweets[i];
+      tweet.user = users[tweet.user_id];
+    }
+    cb(tweets);
+  });
+};
 
 const dateIsYoungerThan10Min = (date) => {
   return moment(date).add(10, 'minutes').isSameOrAfter(new Date());
 };
 
 module.exports = {
+  attachUsers: attachUsers,
+
   insertTweet: (tweet, cb) => {
     let columns = [];
     let values = [];
@@ -43,10 +67,50 @@ module.exports = {
     });
   },
 
+  requestRecentFeed: (userId, count = 100, cb) => {
+    // console.log('inside requestRecentFeed');
+    // console.log('requesting feed from social network processing');
+    // send http request to social network processing, await response
+    let response = ['1', '2', '3', '4', '5'];
+    let params = [];
+    redis.del(`${userId}:feed`, (err, result) => {
+      for (let i = 0; i < response.length; i++) {
+        params.push(i, response[i]);
+      }
+      redis.zadd(`${userId}:feed`, ...params);
+      cb(response);
+    });
+  },
+
   sendEvent: (service, route, body) => {
+    body.created_at = moment().format('ddd MMM D hh:mm:ss ZZ YYYY');
     if (service === 'engagement') {
-      body.created_at = moment().format('ddd MMM D hh:mm:ss ZZ YYYY');
-      // console.log('sent information to User Engagement Analysis route', route);
+      // send http request to user engagement
+    }
+    if (service === 'tweets') {
+      return new Promise((resolve, reject) => {
+        // send http request to tweet inventory
+        // it should return a tweet object, like so
+        let tweet = {
+          id: -1,
+          user_id: 1,
+          created_at: ' 2017-12-17 07:24:22.885',
+          favorite_count: 668,
+          in_reply_to_screen_name: -1,
+          in_reply_to_status_id: -1,
+          in_reply_to_user_id: -1,
+          possibly_sensitive: false,
+          reply_count: 62,
+          retweet_count: 709,
+          source: ' Twitter for Android',
+          text: 'Today made me realize pumpkin spice lattes are awesome',
+          truncated: false
+        };
+
+        attachUsers([tweet], (tweets) => {
+          resolve(tweets[0]);
+        });
+      });
     }
   },
 

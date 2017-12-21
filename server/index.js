@@ -10,21 +10,26 @@ app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x
 
 app.get('/', (req, res) => res.send('Hello World!'));
 
-const engagementPaths = [
-  '/favorite/create',
-  '/favorite/destroy',
-  '/follow/create',
-  '/follow/destroy'
-];
-
-app.post(engagementPaths, (req, res) => {
+app.post('/favorite', (req, res) => {
   utils.sendEvent('engagement', req.path, req.body);
+  // future feature will update the local cache with favorite counts
+  // future feature will send http to user engagement
+  res.status(201).send();
+});
+
+app.post('/follow', (req, res) => {
+  utils.sendEvent('engagement', req.path, req.body);
+  // future feature will update the local cache with follow counts
+  // future feature will send http to user engagement
   res.status(201).send();
 });
 
 app.post('/tweets', (req, res) => {
-  utils.sendEvent('tweets', '/tweets', req.body);
-  res.status(201).send();
+  utils.sendEvent('tweets', '/tweets', req.body)
+  // future feature will send http to tweet inventory
+    .then(tweet => {
+      res.status(201).send(tweet);
+    });
 });
 
 app.get('/feed', (req, res) => {
