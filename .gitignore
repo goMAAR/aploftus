@@ -39,3 +39,8 @@ bower_components/
 # historical data
 data-generation/seed
 data-generation/dump.rdb
+
+# ELK stack for analytics
+kibana*
+elasticsearch*
+apm*
