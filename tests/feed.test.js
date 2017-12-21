@@ -33,6 +33,15 @@ describe('Client Service Feed Handler', () => {
         done();
       });
     });
+
+    it('should serve tweets in order of feed', (done) => {
+      const feed = [5, 4, 3, 2, 1];
+
+      utils.parseFeed(feed, (result) => {
+        expect(result[0].id).to.equal(5);
+        done();
+      });
+    });
   });
 
   describe('userAccessedInLast10Min', () => {
