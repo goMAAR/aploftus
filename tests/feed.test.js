@@ -7,9 +7,25 @@ const server = require('../server/index.js');
 const request = supertest.agent(server);
 
 describe('Client Service Feed Handler', () => {
+  describe('attachUsers', () => {
+    it('should extend tweet object with user object', (done) => {
+      const tweets = [
+        { id: -1, user_id: 1 },
+        { id: -2, user_id: 3 },
+        { id: -3, user_id: 2 },
+      ];
+
+      utils.attachUsers(tweets, (extendedTweets) => {
+        expect(extendedTweets[0].user).to.be.an('object');
+        done();
+      });
+    });
+  });
+
   describe('parseFeed', () => {
     it('should serve tweets from the cache', (done) => {
       const feed = [1, 2, 3, 4, 5];
+
       utils.parseFeed(feed, (result) => {
         expect(result).to.be.an('array');
         expect(result[0]).to.be.an('object');
@@ -32,36 +48,13 @@ describe('Client Service Feed Handler', () => {
 
   describe('getFeedList', () => {
     it('should return a list of tweets', (done) => {
-      const userId = -1;
+      const userId = 1;
 
       utils.getFeedList(userId, 5, (feed) => {
         expect(feed).to.be.an('array');
         expect(feed[0]).to.be.a('string');
         expect(feed.length).to.equal(5);
         done();
-      });
-    });
-  });
-
-  describe('requestRecentFeed', () => {
-    it('should send a request to Social Network Processing', (done) => {
-      const userId = -1;
-
-      utils.requestRecentFeed(userId, 5, (feed) => {
-        expect(feed).to.be.an('array');
-        expect(feed[0]).to.be.a('string');
-        done();
-      });
-    });
-
-    it('should insert recent feed into cache', (done) => {
-      const userId = -1;
-
-      utils.requestRecentFeed(userId, 5, (recentFeed) => {
-        utils.getFeedList(userId, 5, (feedFromCache) => {
-          expect(feedFromCache).to.deep.equal(recentFeed);
-          done();
-        });
       });
     });
   });
@@ -81,7 +74,7 @@ describe('Client Service Feed Handler', () => {
           in_reply_to_status_id: 'null',
           possibly_sensitive: false,
           source: 'Safari for iOS',
-          user_id: -1,
+          user_id: 1,
           id: -1
         };
       utils.insertTweet(newTweet, (result) => {
@@ -94,7 +87,7 @@ describe('Client Service Feed Handler', () => {
   describe('GET requests to /feed', () => {
     it('should respond with a user feed', (done) => {
       const body = {
-        user_id: -1,
+        user_id: 1,
         count: 5
       };
 

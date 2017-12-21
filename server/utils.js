@@ -34,27 +34,12 @@ module.exports = {
   },
 
   parseFeed: (tweetIds, cb) => {
-    console.log('inside parseFeed');
     const params = '(' + tweetIds.join(', ') + ')';
     const query = `SELECT * FROM tweets WHERE id in ${params}`;
 
     cassandra.execute(query, (err, result) => {
       err && console.log(err);
       cb(result.rows);
-    });
-  },
-
-  requestRecentFeed: (userId, count = 100, cb) => {
-    // console.log('requesting feed from social network processing');
-    // send http request to social network processing, await response
-    let response = ['1', '2', '3', '4', '5'];
-    let params = [];
-    redis.del(`${userId}:feed`, (err, result) => {
-      for (let i = 0; i < response.length; i++) {
-        params.push(i, response[i]);
-      }
-      redis.zadd(`${userId}:feed`, ...params);
-      cb(response);
     });
   },
 
