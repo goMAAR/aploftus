@@ -6,7 +6,7 @@
   "scripts": {
     "cache": "redis-server",
     "start": "nodemon server/index.js",
-    "test": "mocha tests/mocha"
+    "test": "mocha tests/"
   },
   "repository": {
     "type": "git",
