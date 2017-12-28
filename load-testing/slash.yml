@@ -1,0 +1,22 @@
+config:
+  target: "http://localhost:3000"
+  phases:
+    - duration: 30
+      arrivalRate: 1
+      rampTo: 100
+      name: "Warm up the application"
+    - duration: 60
+      arrivalRate: 100
+      name: "Sustained light load"
+    - duration: 30
+      arrivalRate: 100
+      rampTo: 500
+      name: "Warm up to max load"
+    - duration: 60
+      arrivalRate: 500
+      name: "Sustained max load"
+scenarios:
+  - name: "slash route"
+    flow:
+      - get:
+          url: "/"
