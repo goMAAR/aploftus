@@ -1,10 +1,14 @@
 require('dotenv').config();
 
-var apm = require('elastic-apm-node').start({
-  appName: 'tweetly-client-server',
-  // Set custom APM Server URL (default: http://localhost:8200)
-  // serverUrl: 'process.env.AMP_IP'
-});
+
+/* comment out below in order to run tests */
+// var apm = require('elastic-apm-node').start({
+//   appName: 'tweetly-client-server',
+//   Set custom APM Server URL (default: http://localhost:8200)
+//   serverUrl: 'http://localhost:8200'
+//   serverUrl: 'process.env.AMP_IP'
+// });
+/* comment out above in order ro run tests */
 
 const express = require('express');
 const app = express();

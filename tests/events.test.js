@@ -44,23 +44,23 @@ describe('Client Service Events', () => {
         .expect(201, done);
     });
 
-    // it('should update favorite counts', (done) => {
-    //   let spy = sinon.spy(utils, 'updateFavorite');
-    //   const body = {
-    //     tweet_id: 1,
-    //     favoriter_id: 1,
-    //     destroy: false
-    //   };
+    it('should update favorite counts', (done) => {
+      sinon.spy(utils, 'updateFavorite');
+      const body = {
+        tweet_id: 1,
+        favoriter_id: 1,
+        author_id: 2,
+        destroy: false
+      };
 
-    //   request
-    //     .post('/favorite')
-    //     .send(body)
-    //     .then(res => {
-    //       console.log(res);
-    //       spy.should.have.been.calledWith(body);
-    //       done();
-    //     });
-    // });
+      request
+        .post('/favorite')
+        .send(body)
+        .then(res => {
+          expect(utils.updateFavorite).to.have.been.calledWith(body);
+          done();
+        });
+    });
 
     it('should send favorite event to User Engagement Analysis', () => {
       sinon.spy(utils, 'sendEvent');
@@ -82,25 +82,25 @@ describe('Client Service Events', () => {
     });
   });
 
-  // describe('updateFollow', () => {
-  //   it('should resolve to an updated follow object', (done) => {
-  //     const body = {
-  //       follower_id: 1,
-  //       followed_id: 2,
-  //       destroy: false
-  //     };
+  describe('updateFollow', () => {
+    it('should resolve to an updated follow object', (done) => {
+      const body = {
+        follower_id: 1,
+        followed_id: 2,
+        destroy: false
+      };
 
-  //     utils.updateFollow(body)
-  //       .then(followObj => {
-  //         expect(followObj).to.be.an('object');
-  //         expect(followObj.follower_id).to.be.a('number');
-  //         expect(followObj.followers_count).to.be.a('number');
-  //         expect(followObj.followed_id).to.be.a('number');
-  //         expect(followObj.friends_count).to.be.a('number');
-  //         done();
-  //       });
-  //   });
-  // });
+      utils.updateFollow(body)
+        .then(followObj => {
+          expect(followObj).to.be.an('object');
+          expect(followObj.follower_id).to.be.a('number');
+          expect(followObj.followers_count).to.be.a('number');
+          expect(followObj.followed_id).to.be.a('number');
+          expect(followObj.friends_count).to.be.a('number');
+          done();
+        });
+    });
+  });
 
   describe('POST requests to /follow', () => {
     it('should respond with a 201 status code', (done) => {
@@ -116,22 +116,22 @@ describe('Client Service Events', () => {
         .expect(201, done);
     });
 
-    // it('should update follow counts', (done) => {
-    //   let spy = sinon.spy(utils, 'updateFollow');
-    //   const body = {
-    //     follower_id: 1,
-    //     followed_id: 2,
-    //     destroy: false
-    //   };
+    it('should update follow counts', (done) => {
+      sinon.spy(utils, 'updateFollow');
+      const body = {
+        follower_id: 1,
+        followed_id: 2,
+        destroy: false
+      };
 
-    //   request
-    //     .post('/favorite')
-    //     .send(body)
-    //     .then(res => {
-    //       expect(spy).to.have.been.calledWith(body);
-    //       done();
-    //     });
-    // });
+      request
+        .post('/favorite')
+        .send(body)
+        .then(res => {
+          expect(utils.updateFollow).to.have.been.calledWith(body);
+          done();
+        });
+    });
 
     it('should send follow event to User Engagement Analysis', () => {
       const body = {
@@ -175,7 +175,6 @@ describe('Client Service Events', () => {
         .post('/tweets')
         .send(body)
         .then(res => {
-          console.log('full tweet', res.body);
           expect(res.body.text).to.equal(body.status);
           expect(res.body.user_id).to.be.a('number');
           expect(res.body.user.name).to.be.a('string');
