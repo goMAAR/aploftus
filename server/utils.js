@@ -1,4 +1,3 @@
-const axios = require('axios');
 const moment = require('moment');
 const Promise = require('bluebird');
 /* cassandra stores the tweet cache and user cache */
