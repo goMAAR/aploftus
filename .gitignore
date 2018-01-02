@@ -4,6 +4,9 @@ config/production.json
 config/staging.json
 config/test.json
 
+# environment variables
+.env
+
 # OS X
 .DS_Store
 
@@ -39,6 +42,9 @@ bower_components/
 # historical data
 data-generation/seed
 data-generation/dump.rdb
+
+# load testing data
+load-testing/csv/
 
 # ELK stack for analytics
 kibana*

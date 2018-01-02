@@ -1,13 +1,15 @@
+require('dotenv').config();
+
 var apm = require('elastic-apm-node').start({
   appName: 'tweetly-client-server',
   // Set custom APM Server URL (default: http://localhost:8200)
-  // serverUrl: 'http://localhost:8200'
+  // serverUrl: 'process.env.AMP_IP'
 });
 
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
-const port = 3000;
+const port = process.env.SERVER_PORT || 5000;
 
 const utils = require('./utils.js');
 
