@@ -1,5 +1,5 @@
 const fs = require('fs');
-const { randomInt, fakeBool } = require('../data-generation/helpers.js');
+const { randomInt, fakeBool } = require('../../data-generation/helpers.js');
 
 const file = __dirname + '/favorites.csv';
 
@@ -11,7 +11,7 @@ stream.once('open', (fd) => {
 
   // this runs a loop to generate 2000000 tweets
   for (let x = 0; x < 500; x++) {
-    command = [randomInt(10000000), randomInt(500000), randomInt(500000), fakeBool()];
+    command = [randomInt(10000000), randomInt(500000), randomInt(500000), randomInt(500), randomInt(500), fakeBool()];
 
     stream.write(command.join(',') + '\n');
 

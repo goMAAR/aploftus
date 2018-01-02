@@ -5,24 +5,48 @@ const cassandra = require('../database/cassandra.js');
 /* redis stores the "feed list", in a sorted set data structure */
 const redis = require('../database/redis.js');
 
-const _attachUsers = (tweets, cb) => {
-  let userIds = [];
-  for (let i = 0; i < tweets.length; i++) {
-    userIds.push(tweets[i].user_id);
-  }
-  const query = `SELECT * from tweetly.users WHERE id in (${userIds.join(', ')})`;
+const _attachUsers = (tweets) => {
+  return new Promise((resolve, reject) => {
+    let userIds = [];
+    for (let i = 0; i < tweets.length; i++) {
+      userIds.push(tweets[i].user_id);
+    }
+    const query = `SELECT * from tweetly.users WHERE id in (${userIds.join(', ')})`;
 
-  cassandra.execute(query, (err, result) => {
-    let users = {};
-    for (i = 0; i < result.rows.length; i++) {
-      let user = result.rows[i];
-      users[user.id] = user;
+    cassandra.execute(query, (err, result) => {
+      let users = {};
+      for (i = 0; i < result.rows.length; i++) {
+        let user = result.rows[i];
+        users[user.id] = user;
+      }
+      for (i = 0; i < tweets.length; i++) {
+        let tweet = tweets[i];
+        tweet.user = users[tweet.user_id];
+      }
+      resolve(tweets);
+    });
+  });
+};
+
+const _insertTweet = (tweet) => {
+  return new Promise((resolve, reject) => {
+    let columns = [];
+    let values = [];
+    for (let prop in tweet) {
+      columns.push(prop);
+      // stringify the tweet properties text, created_at, and source for insertion to cassandra
+      if (prop === 'text' || prop === 'created_at' || prop === 'source') {
+        values.push(`'${tweet[prop]}'`);
+      } else {
+        values.push(tweet[prop]);
+      }
     }
-    for (i = 0; i < tweets.length; i++) {
-      let tweet = tweets[i];
-      tweet.user = users[tweet.user_id];
-    }
-    cb(tweets);
+
+    const query = `INSERT INTO tweetly.tweets (${columns.join(', ')}) VALUES (${values.join(', ')})`;
+    cassandra.execute(query, (err, result) => {
+      // err && console.log(err);
+      resolve(result);
+    });
   });
 };
 
@@ -33,28 +57,9 @@ const _dateIsYoungerThan10Min = (date) => {
 module.exports = {
   // exported for the sake of testing, but used only internally
   _attachUsers: _attachUsers,
-
-  insertTweet: (tweet, cb) => {
-    let columns = [];
-    let values = [];
-    for (let prop in tweet) {
-      columns.push(prop);
-      if (prop === 'text' || prop === 'created_at' || prop === 'source') {
-        values.push(`'${tweet[prop]}'`);
-      } else {
-        values.push(tweet[prop]);
-      }
-    }
-
-    const query = `INSERT INTO tweetly.tweets (${columns.join(', ')}) VALUES (${values.join(', ')})`;
-    cassandra.execute(query, (err, result) => {
-      err && console.log(err);
-      cb(result);
-    });
-  },
+  _insertTweet: _insertTweet,
 
   getFeedList: (userId, count = 100, cb) => {
-    // console.log('inside getFeedList');
     redis.zrange(`${userId}:feed`, 0, count - 1, (err, results) => {
       err && console.log(err);
       // this conversion to number types satisfies the tests, but isn't
@@ -67,7 +72,6 @@ module.exports = {
   },
 
   parseFeed: (tweetIds, cb) => {
-    // console.log('inside parseFeed');
     const params = '(' + tweetIds.join(', ') + ')';
     const query = `SELECT * FROM tweets WHERE id in ${params}`;
 
@@ -131,70 +135,71 @@ module.exports = {
           truncated: false
         };
 
-        _attachUsers([tweet], (tweets) => {
-          resolve(tweets[0]);
-        });
+        _insertTweet(tweet);
+        _attachUsers([tweet])
+          .then(tweets => {
+            resolve(tweets[0]);
+          });
       });
     }
   },
 
   updateFavorite: (favoriteObj) => {
-    let { tweet_id, favoriter_id, destroy } = favoriteObj;
+    let {
+      tweet_id,
+      favoriter_id,
+      destroy,
+      favorite_count,
+      user_favorites_count
+    } = favoriteObj;
 
     return new Promise((resolve, reject) => {
-      let query = `SELECT favorite_count from tweetly.tweets WHERE id = ${tweet_id}`;
+      favorite_count = destroy ? favorite_count - 1 : favorite_count + 1;
+      user_favorites_count = destroy ? user_favorites_count - 1 : user_favorites_count + 1;
+      favoriteObj.favorite_count = favorite_count;
+      favoriteObj.user_favorites_count = user_favorites_count;
+
+      let query = `UPDATE tweetly.tweets SET favorite_count = ${favorite_count} WHERE id = ${tweet_id}`;
 
       cassandra.execute(query, (err, result1) => {
-        let tweetFaveCount = result1.rows[0].favorite_count;
-        tweetFaveCount = destroy ? tweetFaveCount - 1 : tweetFaveCount + 1;
-        query = `UPDATE tweetly.tweets SET favorite_count = ${tweetFaveCount} WHERE id = ${tweet_id}`;
+        // err && console.log(err);
+        query = `UPDATE tweetly.users SET favorites_count = ${user_favorites_count} WHERE id = ${favoriter_id}`;
 
         cassandra.execute(query, (err, result2) => {
-          query = `SELECT favorites_count from tweetly.users WHERE id = ${favoriter_id}`;
-
-          cassandra.execute(query, (err, result3) => {
-            let userFaveCount = result3.rows[0].favorites_count;
-            userFaveCount = destroy ? userFaveCount - 1 : userFaveCount + 1;
-            query = `UPDATE tweetly.users SET favorites_count = ${userFaveCount} WHERE id = ${favoriter_id}`;
-
-            cassandra.execute(query, (err, result4) => {
-              favoriteObj.favorite_count = tweetFaveCount;
-              favoriteObj.user_favorites_count = userFaveCount;
-              resolve(favoriteObj);
-            });
-          });
+          // err && console.log(err);
         });
       });
+
+      resolve(favoriteObj);
     });
   },
 
   updateFollow: (followObj) => {
-    let { follower_id, followed_id, destroy } = followObj;
+    let {
+      follower_id,
+      friends_count,
+      followers_count,
+      followed_id,
+      destroy
+    } = followObj;
 
     return new Promise((resolve, reject) => {
-      let query = `SELECT friends_count from tweetly.users WHERE id = ${follower_id}`;
+      friends_count = destroy ? friends_count - 1 : friends_count + 1;
+      followers_count = destroy ? followers_count - 1 : followers_count + 1;
+      followObj.friends_count = friends_count;
+      followObj.followers_count = followers_count;
+
+      let query = `UPDATE tweetly.users SET friends_count = ${friends_count} WHERE id = ${follower_id}`;
 
       cassandra.execute(query, (err, result1) => {
-        let { friends_count } = result1.rows[0];
-        friends_count = destroy ? friends_count - 1 : friends_count + 1;
-        query = `UPDATE tweetly.users SET friends_count = ${friends_count} WHERE id = ${follower_id}`;
+        // err && console.log(err);
+        query = `UPDATE tweetly.users SET followers_count = ${followers_count} WHERE id = ${followed_id}`;
 
         cassandra.execute(query, (err, result2) => {
-          query = `SELECT followers_count from tweetly.users WHERE id = ${followed_id}`;
-
-          cassandra.execute(query, (err, result3) => {
-            let { followers_count } = result3.rows[0];
-            followers_count = destroy ? followers_count - 1 : followers_count + 1;
-            query = `UPDATE tweetly.users SET followers_count = ${followers_count} WHERE id = ${followed_id}`;
-
-            cassandra.execute(query, (err, result4) => {
-              followObj.friends_count = friends_count;
-              followObj.followers_count = followers_count;
-              resolve(followObj);
-            });
-          });
+          // err && console.log(err);
         });
       });
+      resolve(followObj);
     });
   },
 

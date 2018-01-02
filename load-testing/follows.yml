@@ -19,6 +19,8 @@ config:
     path: "./csv/follows.csv"
     fields:
       - "follower_id"
+      - "friends_count"
+      - "followers_count"
       - "followed_id"
       - "destroy"
 scenarios:
@@ -28,5 +30,7 @@ scenarios:
           url: "/follow"
           json:
             follower_id: '{{ follower_id }}'
+            friends_count: '{{ friends_count }}'
+            followers_count: '{{ followers_count }}'
             followed_id: '{{ followed_id }}'
             destroy: '{{ destroy }}'
