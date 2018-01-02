@@ -15,10 +15,11 @@ describe('Client Service Feed Handler', () => {
         { id: -3, user_id: 2 },
       ];
 
-      utils._attachUsers(tweets, (extendedTweets) => {
-        expect(extendedTweets[0].user).to.be.an('object');
-        done();
-      });
+      utils._attachUsers(tweets)
+        .then(extendedTweets => {
+          expect(extendedTweets[0].user).to.be.an('object');
+          done();
+        });
     });
   });
 
@@ -91,7 +92,7 @@ describe('Client Service Feed Handler', () => {
     });
   });
 
-  describe('insertTweet', () => {
+  describe('_insertTweet', () => {
     it('should parse tweet objects into cache', (done) => {
       const newTweet =
         {
@@ -109,10 +110,11 @@ describe('Client Service Feed Handler', () => {
           user_id: 1,
           id: -1
         };
-      utils.insertTweet(newTweet, (result) => {
-        expect(result).to.exist;
-        done();
-      });
+      utils._insertTweet(newTweet)
+        .then(result => {
+          expect(result).to.exist;
+          done();
+        });
     });
   });
 

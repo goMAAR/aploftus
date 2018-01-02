@@ -1,6 +1,5 @@
 require('dotenv').config();
 
-
 /* comment out below in order to run tests */
 // var apm = require('elastic-apm-node').start({
 //   appName: 'tweetly-client-server',
@@ -20,26 +19,24 @@ const utils = require('./utils.js');
 app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 
+// basic route for testing purposes
 app.get('/', (req, res) => res.send('Hello World!'));
 
 app.post('/favorite', (req, res) => {
   utils.sendEvent('engagement', req.path, req.body);
+  // future feature will send http to sentiment analysis
   utils.updateFavorite(req.body)
-    .then((favoriteObj) => {
+    .then(favoriteObj => {
       res.status(201).send(favoriteObj);
     });
 });
 
 app.post('/follow', (req, res) => {
+  // future feature will send http to sentiment analysis
   utils.sendEvent('engagement', req.path, req.body);
-  utils.updateFollow(req.body);
-  res.status(201).send();
-});
-
-app.post('/tweets', (req, res) => {
-  utils.sendEvent('tweets', '/tweets', req.body)
-    .then(tweet => {
-      res.status(201).send(tweet);
+  utils.updateFollow(req.body)
+    .then(followObj => {
+      res.status(201).send(followObj);
     });
 });
 

@@ -13,6 +13,8 @@ describe('Client Service Events', () => {
       const body = {
         tweet_id: 1,
         favoriter_id: 1,
+        favorite_count: 100,
+        user_favorites_count: 200,
         author_id: 2,
         destroy: true
       };
@@ -20,10 +22,8 @@ describe('Client Service Events', () => {
       utils.updateFavorite(body)
         .then(favoriteObj => {
           expect(favoriteObj).to.be.an('object');
-          expect(favoriteObj.favoriter_id).to.be.a('number');
-          expect(favoriteObj.user_favorites_count).to.be.a('number');
-          expect(favoriteObj.tweet_id).to.be.a('number');
-          expect(favoriteObj.favorite_count).to.be.a('number');
+          expect(favoriteObj.user_favorites_count).to.equal(199);
+          expect(favoriteObj.favorite_count).to.equal(99);
           done();
         });
     });
@@ -34,6 +34,8 @@ describe('Client Service Events', () => {
       const body = {
         tweet_id: 1,
         favoriter_id: 1,
+        favorite_count: 100,
+        user_favorites_count: 200,
         author_id: 2,
         destroy: true
       };
@@ -49,6 +51,8 @@ describe('Client Service Events', () => {
       const body = {
         tweet_id: 1,
         favoriter_id: 1,
+        favorite_count: 100,
+        user_favorites_count: 200,
         author_id: 2,
         destroy: false
       };
@@ -68,6 +72,8 @@ describe('Client Service Events', () => {
       const body = {
         tweet_id: 1,
         favoriter_id: 1,
+        favorite_count: 100,
+        user_favorites_count: 200,
         author_id: 2,
         destroy: true
       };
@@ -86,6 +92,8 @@ describe('Client Service Events', () => {
     it('should resolve to an updated follow object', (done) => {
       const body = {
         follower_id: 1,
+        friends_count: 200,
+        followers_count: 100,
         followed_id: 2,
         destroy: false
       };
@@ -93,10 +101,8 @@ describe('Client Service Events', () => {
       utils.updateFollow(body)
         .then(followObj => {
           expect(followObj).to.be.an('object');
-          expect(followObj.follower_id).to.be.a('number');
-          expect(followObj.followers_count).to.be.a('number');
-          expect(followObj.followed_id).to.be.a('number');
-          expect(followObj.friends_count).to.be.a('number');
+          expect(followObj.followers_count).to.equal(101);
+          expect(followObj.friends_count).to.equal(201);
           done();
         });
     });
@@ -106,6 +112,8 @@ describe('Client Service Events', () => {
     it('should respond with a 201 status code', (done) => {
       const body = {
         follower_id: 1,
+        friends_count: 200,
+        followers_count: 100,
         followed_id: 2,
         destroy: true
       };
@@ -120,6 +128,8 @@ describe('Client Service Events', () => {
       sinon.spy(utils, 'updateFollow');
       const body = {
         follower_id: 1,
+        friends_count: 200,
+        followers_count: 100,
         followed_id: 2,
         destroy: false
       };
@@ -136,6 +146,8 @@ describe('Client Service Events', () => {
     it('should send follow event to User Engagement Analysis', () => {
       const body = {
         follower_id: 1,
+        friends_count: 200,
+        followers_count: 100,
         followed_id: 2,
         destroy: true
       };

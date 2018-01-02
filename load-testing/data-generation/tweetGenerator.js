@@ -1,5 +1,5 @@
 const fs = require('fs');
-const helpers = require('../data-generation/helpers.js');
+const helpers = require('../../data-generation/helpers.js');
 
 const file = __dirname + '/tweets.csv';
 
