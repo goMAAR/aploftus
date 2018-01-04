@@ -21,6 +21,8 @@ config:
         - "tweet_id"
         - "favoriter_id"
         - "author_id"
+        - "favorite_count"
+        - "user_favorites_count"
         - "destroy"
     - path: "./csv/feeds.csv"
       fields:
@@ -29,6 +31,8 @@ config:
     - path: "./csv/follows.csv"
       fields:
         - "follower_id"
+        - "friends_count"
+        - "followers_count"
         - "followed_id"
         - "destroy"
     - path: "./csv/tweets.csv"
@@ -45,6 +49,8 @@ scenarios:
             tweet_id: '{{ tweet_id }}'
             favoriter_id: '{{ favoriter_id }}'
             author_id: '{{ author_id }}'
+            favorite_count: '{{ favorite_count }}'
+            user_favorites_count: '{{ user_favorites_count }}'
             destroy: '{{ destroy }}'
   - name: "View feed"
     flow:
@@ -59,6 +65,8 @@ scenarios:
           url: "/follow"
           json:
             follower_id: '{{ follower_id }}'
+            friends_count: '{{ friends_count }}'
+            followers_count: '{{ followers_count }}'
             followed_id: '{{ followed_id }}'
             destroy: '{{ destroy }}'
   - name: "Write Tweet"
