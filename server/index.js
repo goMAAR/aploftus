@@ -1,11 +1,12 @@
+require('newrelic');
 require('dotenv').config();
 
 /* comment out apm below in order to run tests */
-var apm = require('elastic-apm-node').start({
-  appName: 'tweetly-client-server',
-  // Set custom APM Server URL (default: http://localhost:8200)
-  // serverUrl: 'process.env.AMP_IP'
-});
+// var apm = require('elastic-apm-node').start({
+//   appName: 'tweetly-client-server',
+//   // Set custom APM Server URL (default: http://localhost:8200)
+//   // serverUrl: 'process.env.AMP_IP'
+// });
 
 const express = require('express');
 const app = express();
