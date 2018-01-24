@@ -5,7 +5,9 @@
   "main": "server/index.js",
   "scripts": {
     "cache": "redis-server",
-    "start": "nodemon server/index.js",
+    "database": "cassandra -f",
+    "start-dev": "nodemon server/index.js",
+    "start": "node server/index.js",
     "test": "mocha tests/"
   },
   "repository": {

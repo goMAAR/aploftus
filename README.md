@@ -1,35 +1,33 @@
-# Project Name
+# Tweet.ly
 
-The project description
-
-## Roadmap
-
-View the project roadmap [here](LINK_TO_DOC)
+Client-facing Twitter clone proxy microservice to analyze user behaviors
 
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines.
 
-# Table of Contents
-
-1. [Usage](#Usage)
-1. [Requirements](#requirements)
-1. [Development](#development)
-    1. [Installing Dependencies](#installing-dependencies)
-    1. [Tasks](#tasks)
-
 ## Usage
 
-> Some usage instructions
+Install dependencies
+```npm install```
+
+Start Redis
+```npm run cache```
+
+Start Cassandra
+```npm run database```
+
+Start Node Server
+```npm start```
 
 ## Requirements
 
-- Node 6.9.x
-- Redis 3.2.x
-- Postgresql 9.6.x
-- etc
+- Node 9.4.x
+- Redis 4.0.x
+- Cassandra 3.11.x
 
 ## Other Information
 
-(TODO: fill this out with details about your project. Suggested ideas: architecture diagram, schema, and any other details from your app plan that sound interesting.)
+![Tweet.ly Proxy Server Architecture](https://user-images.githubusercontent.com/26525656/35350160-dfaa1142-00f1-11e8-9c80-70c7d5eaef35.png)
 
+![Tweet.ly Service Architecture](https://user-images.githubusercontent.com/26525656/35350190-ff83709e-00f1-11e8-90ab-e9c0962e118e.png)
